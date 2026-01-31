@@ -1,0 +1,123 @@
+import { Product } from '@/context/CartContext';
+
+export const products: Product[] = [
+  {
+    id: 'chilli-powder',
+    name: 'Premium Red Chilli Powder',
+    price: 149,
+    originalPrice: 199,
+    image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&h=400&fit=crop',
+    category: 'Powders',
+    weight: '200g',
+    badge: 'Bestseller',
+    description: 'Our premium red chilli powder is made from handpicked Kashmiri and Guntur chillies, sun-dried and stone-ground to preserve their natural oils and vibrant color. Perfect for adding authentic heat and rich color to your dishes.',
+    ingredients: '100% Pure Red Chilli (Capsicum annuum)',
+    usage: 'Add to curries, marinades, and dry rubs. Use 1-2 teaspoons per serving depending on your heat preference.',
+    storage: 'Store in a cool, dry place away from direct sunlight. Keep in an airtight container after opening.',
+  },
+  {
+    id: 'turmeric-powder',
+    name: 'Golden Turmeric Powder',
+    price: 129,
+    originalPrice: 169,
+    image: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=400&h=400&fit=crop',
+    category: 'Powders',
+    weight: '200g',
+    badge: 'Organic',
+    description: 'Pure golden turmeric sourced from the fertile lands of Salem. Our turmeric contains high curcumin content, providing both vibrant color and health benefits. Traditionally processed to maintain maximum potency.',
+    ingredients: '100% Pure Turmeric (Curcuma longa)',
+    usage: 'Essential for curries, rice dishes, and golden milk. Use ½-1 teaspoon per serving.',
+    storage: 'Store in a cool, dry place. Turmeric can stain, handle with care.',
+  },
+  {
+    id: 'coriander-powder',
+    name: 'Fresh Coriander Powder',
+    price: 99,
+    originalPrice: 129,
+    image: 'https://images.unsplash.com/photo-1599909533621-9b41e878798c?w=400&h=400&fit=crop',
+    category: 'Powders',
+    weight: '200g',
+    description: 'Aromatic coriander powder made from premium quality coriander seeds. Freshly ground to release the essential oils that give your dishes that distinctive warm, citrusy flavor.',
+    ingredients: '100% Pure Coriander Seeds (Coriandrum sativum)',
+    usage: 'Add to curries, soups, and vegetable dishes. Use 1-2 teaspoons per serving.',
+    storage: 'Store in an airtight container in a cool, dry place.',
+  },
+  {
+    id: 'garam-masala',
+    name: 'Royal Garam Masala',
+    price: 199,
+    originalPrice: 249,
+    image: 'https://images.unsplash.com/photo-1532336414038-cf19250c5757?w=400&h=400&fit=crop',
+    category: 'Masalas',
+    weight: '100g',
+    badge: 'Premium',
+    description: 'A royal blend of 12 aromatic spices including cardamom, cinnamon, cloves, and black pepper. Our signature garam masala recipe has been perfected over generations for the perfect balance of warmth and fragrance.',
+    ingredients: 'Coriander, Cumin, Black Pepper, Cardamom, Cinnamon, Cloves, Bay Leaves, Nutmeg, Mace, Fennel, Caraway, Star Anise',
+    usage: 'Add at the end of cooking for maximum aroma. Use ½-1 teaspoon per serving.',
+    storage: 'Store in an airtight container. Use within 6 months for best flavor.',
+  },
+  {
+    id: 'cumin-powder',
+    name: 'Roasted Cumin Powder',
+    price: 119,
+    originalPrice: 149,
+    image: 'https://images.unsplash.com/photo-1596547609652-9cf5d8d76921?w=400&h=400&fit=crop',
+    category: 'Powders',
+    weight: '200g',
+    description: 'Premium cumin seeds, carefully roasted and ground to bring out their earthy, nutty flavor. A staple spice that forms the backbone of countless Indian recipes.',
+    ingredients: '100% Pure Cumin Seeds (Cuminum cyminum)',
+    usage: 'Perfect for raitas, chaats, and curries. Use ½-1 teaspoon per serving.',
+    storage: 'Store in an airtight container in a cool, dry place.',
+  },
+  {
+    id: 'kitchen-king',
+    name: 'Kitchen King Masala',
+    price: 179,
+    originalPrice: 219,
+    image: 'https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?w=400&h=400&fit=crop',
+    category: 'Masalas',
+    weight: '100g',
+    description: 'An all-purpose masala blend that brings restaurant-quality taste to your home cooking. Perfect for vegetables, paneer, and everyday dishes.',
+    ingredients: 'Coriander, Red Chilli, Turmeric, Cumin, Amchur, Black Pepper, Fenugreek, Ginger, Cardamom, Cinnamon, Cloves, Bay Leaves',
+    usage: 'Add 1-2 teaspoons while cooking vegetables or paneer dishes.',
+    storage: 'Store in an airtight container in a cool, dry place.',
+  },
+  {
+    id: 'biryani-masala',
+    name: 'Hyderabadi Biryani Masala',
+    price: 229,
+    originalPrice: 279,
+    image: 'https://images.unsplash.com/photo-1596097635121-14b63a7b0da8?w=400&h=400&fit=crop',
+    category: 'Blends',
+    weight: '100g',
+    badge: 'Special',
+    description: 'Authentic Hyderabadi biryani masala with a perfect balance of spices. This aromatic blend will transport you to the royal kitchens of Nizam.',
+    ingredients: 'Shah Jeera, Mace, Nutmeg, Star Anise, Green Cardamom, Black Cardamom, Bay Leaves, Cinnamon, Cloves, Saffron Strands',
+    usage: 'Use 2 tablespoons for 1kg of rice. Layer between rice and meat for best results.',
+    storage: 'Store in an airtight container away from heat and moisture.',
+  },
+  {
+    id: 'sambar-powder',
+    name: 'South Indian Sambar Powder',
+    price: 139,
+    originalPrice: 179,
+    image: 'https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?w=400&h=400&fit=crop',
+    category: 'Blends',
+    weight: '200g',
+    description: 'Traditional South Indian sambar powder made with authentic recipes from Tamil Nadu. The perfect balance of heat, tanginess, and aromatic spices.',
+    ingredients: 'Toor Dal, Coriander, Red Chilli, Cumin, Fenugreek, Curry Leaves, Mustard, Asafoetida, Turmeric',
+    usage: 'Add 2-3 tablespoons to sambar while cooking. Adjust to taste.',
+    storage: 'Store in a cool, dry place. Refrigerate for extended freshness.',
+  },
+];
+
+export const getProductById = (id: string): Product | undefined => {
+  return products.find(product => product.id === id);
+};
+
+export const getProductsByCategory = (category: string): Product[] => {
+  if (category === 'All') return products;
+  return products.filter(product => product.category === category);
+};
+
+export const categories = ['All', 'Powders', 'Masalas', 'Blends'];
