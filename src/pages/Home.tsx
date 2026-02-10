@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, Shield, Leaf, Package, Star, CheckCircle } from 'lucide-react';
+import { ArrowRight, Shield, Leaf, Package, Star, CheckCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProductCard from '@/components/ProductCard';
-import { products } from '@/data/products';
+import { useProducts } from '@/hooks/useProducts';
 
 const Home = () => {
-  const bestsellers = products.slice(0, 4);
+  const { data: products, isLoading } = useProducts();
+  const bestsellers = products?.filter(p => p.badge === 'Bestseller').slice(0, 4) || [];
 
   const trustIndicators = [
     { icon: Leaf, title: '100% Natural', description: 'No artificial additives or preservatives' },
@@ -68,7 +69,7 @@ const Home = () => {
                 transition={{ delay: 0.4, duration: 0.6 }}
                 className="text-lg md:text-xl text-primary-foreground/90 mb-8 max-w-lg mx-auto lg:mx-0"
               >
-                Pure • Authentic • Trusted Spices from BVR Spices. Bringing the 
+                Pure • Authentic • Trusted Spices from BVR Spices. Bringing the
                 essence of traditional Indian cooking to your kitchen.
               </motion.p>
 
@@ -172,15 +173,21 @@ const Home = () => {
               Bestselling Spices
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Discover our most loved spices, carefully selected and packed to bring 
+              Discover our most loved spices, carefully selected and packed to bring
               authentic flavors to your kitchen.
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {bestsellers.map((product, index) => (
-              <ProductCard key={product.id} product={product} index={index} />
-            ))}
+            {isLoading ? (
+              <div className="col-span-full flex justify-center py-10">
+                <Loader2 className="h-10 w-10 animate-spin text-primary" />
+              </div>
+            ) : (
+              bestsellers.map((product, index) => (
+                <ProductCard key={product.id} product={product} index={index} />
+              ))
+            )}
           </div>
 
           <motion.div
@@ -224,7 +231,7 @@ const Home = () => {
                   <div>
                     <h3 className="font-heading font-semibold text-lg mb-1">Traditional Sourcing</h3>
                     <p className="text-muted-foreground">
-                      We source our spices directly from trusted farmers across India, 
+                      We source our spices directly from trusted farmers across India,
                       ensuring freshness and authenticity in every batch.
                     </p>
                   </div>
@@ -236,7 +243,7 @@ const Home = () => {
                   <div>
                     <h3 className="font-heading font-semibold text-lg mb-1">Quality Testing</h3>
                     <p className="text-muted-foreground">
-                      Every batch undergoes rigorous quality checks to ensure purity, 
+                      Every batch undergoes rigorous quality checks to ensure purity,
                       flavor, and freedom from contaminants.
                     </p>
                   </div>
@@ -248,7 +255,7 @@ const Home = () => {
                   <div>
                     <h3 className="font-heading font-semibold text-lg mb-1">Careful Packaging</h3>
                     <p className="text-muted-foreground">
-                      Our spices are hygienically packed in airtight containers to 
+                      Our spices are hygienically packed in airtight containers to
                       preserve freshness and extend shelf life.
                     </p>
                   </div>
@@ -311,7 +318,7 @@ const Home = () => {
               Bring Home the Taste of Purity
             </h2>
             <p className="text-primary-foreground/80 text-lg mb-8 max-w-2xl mx-auto">
-              Experience the difference that quality makes. Order now and taste 
+              Experience the difference that quality makes. Order now and taste
               the authentic flavors of India.
             </p>
             <Link to="/products">

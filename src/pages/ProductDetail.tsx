@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, Minus, Plus, ArrowLeft, Check, Leaf, Shield, Package } from 'lucide-react';
+import { ShoppingCart, Minus, Plus, ArrowLeft, Check, Leaf, Shield, Package, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/context/CartContext';
-import { getProductById, products } from '@/data/products';
+import { useProduct, useProducts } from '@/hooks/useProducts'; // Assuming useProducts is needed for related items
 import ProductCard from '@/components/ProductCard';
 
 const ProductDetail = () => {
@@ -14,9 +14,18 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
 
-  const product = id ? getProductById(id) : undefined;
+  const { data: product, isLoading, error } = useProduct(id || '');
+  const { data: allProducts } = useProducts();
 
-  if (!product) {
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error || !product) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -29,9 +38,9 @@ const ProductDetail = () => {
     );
   }
 
-  const relatedProducts = products
-    .filter(p => p.category === product.category && p.id !== product.id)
-    .slice(0, 4);
+  const relatedProducts = allProducts
+    ? allProducts.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4)
+    : [];
 
   const tabs = [
     { id: 'description', label: 'Description' },
@@ -117,11 +126,11 @@ const ProductDetail = () => {
               </h1>
 
               <div className="flex items-baseline gap-3 mb-6">
-                <span className="text-3xl font-bold text-primary">₹{product.price}</span>
+                <span className="text-3xl font-bold text-primary">₹{typeof product.price === 'number' ? product.price.toFixed(2) : product.price}</span>
                 {product.originalPrice && (
                   <>
                     <span className="text-xl text-muted-foreground line-through">
-                      ₹{product.originalPrice}
+                      ₹{typeof product.originalPrice === 'number' ? product.originalPrice.toFixed(2) : product.originalPrice}
                     </span>
                     <span className="text-sm bg-secondary/20 text-secondary-foreground px-2 py-1 rounded">
                       {Math.round((1 - product.price / product.originalPrice) * 100)}% OFF
@@ -176,7 +185,7 @@ const ProductDetail = () => {
                 onClick={handleAddToCart}
               >
                 <ShoppingCart className="w-5 h-5 mr-2" />
-                Add to Cart - ₹{product.price * quantity}
+                Add to Cart - ₹{(product.price * quantity).toFixed(2)}
               </Button>
 
               {/* Tabs */}
@@ -186,11 +195,10 @@ const ProductDetail = () => {
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`px-4 py-3 font-medium text-sm whitespace-nowrap transition-colors relative ${
-                        activeTab === tab.id
-                          ? 'text-primary'
-                          : 'text-muted-foreground hover:text-foreground'
-                      }`}
+                      className={`px-4 py-3 font-medium text-sm whitespace-nowrap transition-colors relative ${activeTab === tab.id
+                        ? 'text-primary'
+                        : 'text-muted-foreground hover:text-foreground'
+                        }`}
                     >
                       {tab.label}
                       {activeTab === tab.id && (
@@ -243,8 +251,8 @@ const ProductDetail = () => {
                   <div>
                     <h4 className="font-heading font-semibold mb-1">BVR Quality Promise</h4>
                     <p className="text-sm text-muted-foreground">
-                      Every product from BVR Spices undergoes rigorous quality checks to ensure 
-                      purity, freshness, and authentic taste. We guarantee 100% natural ingredients 
+                      Every product from BVR Spices undergoes rigorous quality checks to ensure
+                      purity, freshness, and authentic taste. We guarantee 100% natural ingredients
                       with no preservatives or artificial additives.
                     </p>
                   </div>

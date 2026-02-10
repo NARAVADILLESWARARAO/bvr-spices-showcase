@@ -1,21 +1,25 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Filter } from 'lucide-react';
+import { Search, Filter, Loader2 } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
-import { products, categories } from '@/data/products';
+import { categories } from '@/data/products'; // Keeping categories static for now or fetch from backend if available
 import { Button } from '@/components/ui/button';
+import { useProducts } from '@/hooks/useProducts';
 
 const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
+  const { data: products, isLoading, error } = useProducts();
+
   const filteredProducts = useMemo(() => {
+    if (!products) return [];
     return products.filter((product) => {
       const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
       const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [products, selectedCategory, searchQuery]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -32,7 +36,7 @@ const Products = () => {
               Our Spice Collection
             </h1>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Carefully sourced and packed for purity. Discover the authentic flavors 
+              Carefully sourced and packed for purity. Discover the authentic flavors
               that have been trusted by Indian kitchens for generations.
             </p>
           </motion.div>
@@ -57,9 +61,8 @@ const Products = () => {
                   variant={selectedCategory === category ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => setSelectedCategory(category)}
-                  className={`flex-shrink-0 ${
-                    selectedCategory === category ? '' : 'text-muted-foreground'
-                  }`}
+                  className={`flex-shrink-0 ${selectedCategory === category ? '' : 'text-muted-foreground'
+                    }`}
                 >
                   {category}
                 </Button>
@@ -89,7 +92,15 @@ const Products = () => {
       {/* Products Grid */}
       <section className="section-padding">
         <div className="container-custom">
-          {filteredProducts.length > 0 ? (
+          {isLoading ? (
+            <div className="flex justify-center items-center py-20">
+              <Loader2 className="h-10 w-10 animate-spin text-primary" />
+            </div>
+          ) : error ? (
+            <div className="text-center py-20 text-red-500">
+              Error loading products. Please try again later.
+            </div>
+          ) : filteredProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredProducts.map((product, index) => (
                 <ProductCard key={product.id} product={product} index={index} />

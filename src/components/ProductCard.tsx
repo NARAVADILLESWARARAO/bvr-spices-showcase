@@ -28,7 +28,7 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
           alt={product.name}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
-        
+
         {/* Badge */}
         {product.badge && (
           <Badge className="absolute top-3 left-3 bg-secondary text-secondary-foreground font-medium">
@@ -82,13 +82,13 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
           </h3>
         </Link>
         <p className="text-sm text-muted-foreground mt-1">{product.weight}</p>
-        
+
         <div className="flex items-center justify-between mt-4">
           <div className="flex items-baseline gap-2">
-            <span className="text-xl font-bold text-primary">₹{product.price}</span>
+            <span className="text-xl font-bold text-primary">₹{typeof product.price === 'number' ? product.price.toFixed(2) : product.price}</span>
             {product.originalPrice && (
               <span className="text-sm text-muted-foreground line-through">
-                ₹{product.originalPrice}
+                ₹{typeof product.originalPrice === 'number' ? product.originalPrice.toFixed(2) : product.originalPrice}
               </span>
             )}
           </div>
