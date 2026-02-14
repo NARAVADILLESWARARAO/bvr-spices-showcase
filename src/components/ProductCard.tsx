@@ -15,11 +15,11 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="card-product group"
+      transition={{ duration: 0.8, delay: index * 0.1, ease: [0.21, 0.45, 0.32, 0.9] }}
+      className="group relative"
     >
       {/* Image Container */}
       <div className="relative overflow-hidden aspect-square">
@@ -46,30 +46,34 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
           >
             <Link to={`/products/${product.id}`}>
               <Button
-                size="icon"
                 variant="secondary"
-                className="w-11 h-11 rounded-full shadow-lg"
+                className="rounded-full px-8 bg-white text-stone-900 hover:bg-secondary hover:text-stone-950 font-bold tracking-widest text-xs uppercase"
               >
-                <Eye className="w-5 h-5" />
+                View Details
               </Button>
             </Link>
-          </motion.div>
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            whileHover={{ scale: 1 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.2, delay: 0.1 }}
-          >
-            <Button
-              size="icon"
-              className="w-11 h-11 rounded-full shadow-lg"
-              onClick={() => addToCart(product)}
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                addToCart(product);
+              }}
+              className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-stone-950 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75 hover:scale-110"
             >
               <ShoppingCart className="w-5 h-5" />
-            </Button>
-          </motion.div>
+            </button>
+          </div>
+
+          {/* Gold Foil Badge */}
+          {product.badge && (
+            <div className="absolute top-5 left-5">
+              <div className="bg-gradient-to-br from-secondary via-secondary-foreground to-secondary px-4 py-1.5 rounded-full shadow-lg border border-white/20">
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-950">
+                  {product.badge}
+                </span>
+              </div>
+            </div>
+          )}
         </div>
-      </div>
 
       {/* Content */}
       <div className="p-4 md:p-5">
@@ -92,13 +96,6 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
               </span>
             )}
           </div>
-          <Button
-            size="sm"
-            onClick={() => addToCart(product)}
-            className="btn-primary text-xs px-3"
-          >
-            Add to Cart
-          </Button>
         </div>
       </div>
     </motion.div>

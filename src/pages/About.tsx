@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Leaf, Shield, Package, Award, ArrowRight, CheckCircle } from 'lucide-react';
+import { Leaf, Shield, Package, Award, ArrowRight, CheckCircle, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
@@ -39,75 +39,110 @@ const About = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary/10 to-secondary/10 py-20 md:py-28">
-        <div className="container-custom">
+      <section className="relative h-[80vh] flex items-center overflow-hidden bg-stone-950">
+        <div className="absolute inset-0">
+          <motion.img
+            initial={{ scale: 1.2, opacity: 0 }}
+            animate={{ scale: 1, opacity: 0.5 }}
+            transition={{ duration: 2 }}
+            src="/brand-assets/premium-spice-bg-3.png"
+            alt="About BVR Heritage"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-stone-950/70" />
+          <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-stone-950 via-stone-950/50 to-transparent" />
+        </div>
+
+        <div className="container-custom relative z-10 pt-20">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="max-w-3xl mx-auto text-center"
+            transition={{ duration: 1.2 }}
+            className="max-w-4xl mx-auto text-center"
           >
-            <span className="text-secondary font-medium text-sm uppercase tracking-wider">
-              Our Story
-            </span>
-            <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mt-4 mb-6">
-              Bringing India's Finest Spices to Your Kitchen
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="inline-flex items-center gap-3 mb-8"
+            >
+              <div className="w-12 h-[1px] bg-secondary" />
+              <span className="text-secondary font-bold text-xs uppercase tracking-[0.5em]">Our Legacy</span>
+              <div className="w-12 h-[1px] bg-secondary" />
+            </motion.div>
+            <h1 className="font-heading text-5xl md:text-8xl font-bold text-white mb-10 leading-tight">
+              Purity in <span className="text-secondary italic">Every</span> Grain.
             </h1>
-            <p className="text-muted-foreground text-lg">
-              For over 14 years, BVR Spices has been on a mission to deliver the most 
-              authentic, pure, and flavorful spices to Indian households.
+            <p className="text-stone-300 text-xl md:text-2xl font-light leading-relaxed max-w-2xl mx-auto">
+              Since 2010, we've been more than just spice makers. We are curators of 
+              India's rich, ancestral culinary heritage.
             </p>
           </motion.div>
         </div>
+
+        {/* Floating Decor */}
+        <div className="absolute -bottom-12 -left-20 w-80 h-80 bg-secondary/5 rounded-full blur-[120px]" />
       </section>
 
-      {/* Brand Story */}
-      <section className="section-padding">
+      {/* Brand Story (Editorial Style) */}
+      <section className="section-padding bg-stone-950 overflow-hidden">
         <div className="container-custom">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-24 items-center">
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
+              transition={{ duration: 1 }}
+              className="relative"
             >
-              <img
-                src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=600&h=500&fit=crop"
-                alt="BVR Spices Story"
-                className="w-full rounded-2xl shadow-card"
-              />
+              <div className="aspect-[4/5] rounded-[3rem] overflow-hidden">
+                <img
+                  src="/brand-assets/premium-spice-bg-1.png"
+                  alt="Ancient Spice Trade"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="absolute -bottom-10 -right-10 glass-card !p-12 hidden md:block border-secondary/20 bg-secondary/5">
+                <span className="text-secondary font-bold text-5xl mb-2 block">14+</span>
+                <p className="text-white text-sm font-medium uppercase tracking-[0.2em]">Years of Excellence</p>
+              </div>
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
+              initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              transition={{ duration: 0.8 }}
             >
-              <span className="text-secondary font-medium text-sm uppercase tracking-wider">
-                Since 2010
-              </span>
-              <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mt-2 mb-6">
-                A Legacy of Flavor & Trust
+              <span className="text-secondary font-bold text-sm uppercase tracking-[0.4em] mb-6 block">The BVR Narrative</span>
+              <h2 className="font-heading text-4xl md:text-6xl font-bold text-white mb-10 leading-tight">
+                Crafting Purity <br />
+                <span className="text-stone-500 italic">Across Generations</span>
               </h2>
-              <div className="space-y-4 text-muted-foreground">
+              <div className="space-y-8 text-stone-400 text-lg leading-relaxed font-light">
                 <p>
-                  BVR Spices was born from a simple observation – Indian families 
-                  deserved better access to pure, authentic spices that reminded them 
-                  of their grandmothers' cooking.
+                  BVR Spices was born from a simple observation: Indian families 
+                  deserved better access to pure, authentic spices that honoed the 
+                  sensory depth of traditional cooking.
                 </p>
+                <ul className="list-disc list-inside space-y-4">
+                  {[
+                    { title: "100% Pure & Natural", desc: "No artificial additives, preservatives, or colors. Just pure spice as nature intended." },
+                    { title: "Rich Aroma & Freshness", desc: "Sun-dried and stone-ground to preserve the natural oils and deep fragrance." },
+                    { title: "Hygienically Processed", desc: "Maintaining modern standards of hygiene and quality at every step of production." },
+                    { title: "Premium Assurance", desc: "Every product reflects our commitment to trust and excellence, tested for purity." }
+                  ].map((value, idx) => (
+                    <li key={idx}>
+                      <strong className="text-white">{value.title}:</strong> {value.desc}
+                    </li>
+                  ))}
+                </ul>
                 <p>
-                  What started as a small family venture in Chennai has grown into 
-                  a trusted brand serving thousands of households across India. Our 
-                  founder's vision was clear: bring the taste of traditional Indian 
-                  spices to modern kitchens without compromising on quality.
-                </p>
-                <p>
-                  Today, we continue to honor that vision by carefully sourcing, 
-                  processing, and packaging our spices with the same love and attention 
-                  to detail that defined our humble beginnings.
+                  We don't just sell spices; we curate the alchemy of your kitchen, 
+                  ensuring that the heritage of Indian flavor is preserved for 
+                  the tables of tomorrow.
                 </p>
               </div>
             </motion.div>
@@ -115,25 +150,27 @@ const About = () => {
         </div>
       </section>
 
-      {/* Our Process */}
-      <section className="section-padding bg-card">
-        <div className="container-custom">
+      {/* Our Process (Glassmorphism) */}
+      <section className="section-padding bg-stone-900 overflow-hidden relative">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-secondary/20 to-transparent" />
+        
+        <div className="container-custom relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
+            transition={{ duration: 0.8 }}
+            className="text-center mb-24"
           >
-            <span className="text-secondary font-medium text-sm uppercase tracking-wider">
-              How We Work
-            </span>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mt-2 mb-4">
-              Our Process
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              From farm to your kitchen, every step is carefully monitored to ensure 
-              the highest quality spices reach your table.
+            <span className="text-secondary font-bold text-sm uppercase tracking-[0.4em] mb-6 block">Our Methodology</span>
+            <h1 className="font-heading text-5xl md:text-7xl font-bold text-white mb-6">
+              Where <span className="text-secondary italic">Quality</span> <br />
+              Meets <span className="text-stone-400">Flavor.</span>
+            </h1>
+            <p className="text-stone-300 text-lg md:text-xl max-w-2xl font-light leading-relaxed">
+              At BVR Spices, we bring the authentic taste of tradition to every kitchen. 
+              Based in Vijayawada, we are committed to delivering high-quality, pure, 
+              and flavorful spices sourced from the finest farms.
             </p>
           </motion.div>
 
@@ -144,23 +181,17 @@ const About = () => {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="relative"
+                transition={{ duration: 0.6, delay: index * 0.1 }}
               >
-                <div className="bg-background rounded-xl p-6 h-full border border-border hover:border-primary/30 transition-colors">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                    <span className="text-primary font-bold">{step.step}</span>
+                <div className="glass-card !p-10 h-full border-white/5 bg-white/5 hover:bg-white/10 group transition-all duration-500">
+                  <div className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center mb-8 group-hover:bg-secondary group-hover:scale-110 transition-all duration-500">
+                    <step.icon className="w-8 h-8 text-secondary group-hover:text-stone-900 transition-colors duration-500" />
                   </div>
-                  <h3 className="font-heading text-xl font-semibold text-foreground mb-2">
+                  <h3 className="font-heading text-2xl font-bold text-white mb-4 group-hover:text-secondary transition-colors">
                     {step.title}
                   </h3>
-                  <p className="text-muted-foreground text-sm">{step.description}</p>
+                  <p className="text-stone-400 text-sm leading-relaxed font-light">{step.description}</p>
                 </div>
-                {index < processSteps.length - 1 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-4 transform -translate-y-1/2">
-                    <ArrowRight className="w-6 h-6 text-muted-foreground/30" />
-                  </div>
-                )}
               </motion.div>
             ))}
           </div>
@@ -168,24 +199,22 @@ const About = () => {
       </section>
 
       {/* Our Values */}
-      <section className="section-padding">
+      <section className="section-padding bg-stone-50">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-12"
+            className="text-center mb-16"
           >
-            <span className="text-secondary font-medium text-sm uppercase tracking-wider">
-              What We Stand For
-            </span>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mt-2 mb-4">
+            <span className="text-secondary font-bold text-sm uppercase tracking-[0.4em] mb-6 block">What We Stand For</span>
+            <h2 className="font-heading text-4xl md:text-5xl font-bold text-stone-900 mb-6">
               Our Promise to You
             </h2>
           </motion.div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {values.map((value, index) => (
               <motion.div
                 key={value.title}
@@ -193,42 +222,43 @@ const About = () => {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="text-center p-6 rounded-xl bg-card hover:shadow-card transition-shadow"
+                className="text-center p-10 rounded-3xl bg-white border border-stone-100 hover:shadow-premium transition-all duration-500 group"
               >
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-                  <value.icon className="w-8 h-8 text-primary" />
+                <div className="w-20 h-20 mx-auto mb-8 rounded-full bg-stone-50 flex items-center justify-center group-hover:bg-primary group-hover:scale-110 transition-all duration-500">
+                  <value.icon className="w-10 h-10 text-primary group-hover:text-white transition-colors duration-500" />
                 </div>
-                <h3 className="font-heading text-lg font-semibold text-foreground mb-2">
+                <h3 className="font-heading text-2xl font-bold text-stone-900 mb-4 group-hover:text-primary transition-colors">
                   {value.title}
                 </h3>
-                <p className="text-sm text-muted-foreground">{value.description}</p>
+                <p className="text-stone-500 text-sm leading-relaxed">{value.description}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="section-padding bg-gradient-to-br from-primary to-accent text-primary-foreground">
-        <div className="container-custom text-center">
+      {/* Final Heritage Banner */}
+      <section className="py-24 bg-stone-950 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-1/3 h-full bg-secondary/5 -skew-x-12 translate-x-1/2" />
+        <div className="container-custom text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 1 }}
           >
-            <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">
-              Experience the BVR Difference
+            <Star className="w-12 h-12 text-secondary mx-auto mb-8" />
+            <h2 className="font-heading text-4xl md:text-6xl font-bold text-white mb-8">
+              Experience the BVR <span className="text-secondary italic">Difference</span>
             </h2>
-            <p className="text-primary-foreground/80 text-lg mb-8 max-w-2xl mx-auto">
-              Join thousands of happy customers who have made BVR Spices a part of 
-              their daily cooking.
+            <p className="text-stone-400 text-xl font-light mb-12 max-w-2xl mx-auto leading-relaxed">
+              Join thousands of happy families who have made BVR Spices a legacy 
+              at their dinner tables.
             </p>
             <Link to="/products">
-              <Button variant="cta" size="xl">
-                Shop Our Collection
-                <ArrowRight className="w-5 h-5" />
-              </Button>
+              <button className="btn-premium !px-16 !py-6 !text-xl">
+                Shop the Collection
+              </button>
             </Link>
           </motion.div>
         </div>
