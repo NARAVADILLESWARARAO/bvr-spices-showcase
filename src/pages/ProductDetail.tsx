@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, Minus, Plus, ArrowLeft, Check, Leaf, Shield, Package, Loader2 } from 'lucide-react';
+import { ShoppingCart, Minus, Plus, ArrowLeft, Check, Leaf, Shield, Package, Loader2, Info, FlaskConical, Utensils } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/context/CartContext';
 import { useProduct, useProducts } from '@/hooks/useProducts'; // Assuming useProducts is needed for related items
@@ -46,7 +46,14 @@ const ProductDetail = () => {
     { id: 'description', label: 'The Essence', icon: Info },
     { id: 'ingredients', label: 'Composition', icon: FlaskConical },
     { id: 'usage', label: 'Culinary Use', icon: Utensils },
+    { id: 'usage', label: 'Culinary Use', icon: Utensils },
     { id: 'storage', label: 'Preservation', icon: Package },
+  ];
+
+  const highlights = [
+    { text: "100% Organic", icon: Leaf },
+    { text: "Quality Verified", icon: Check },
+    { text: "Sustainable", icon: Shield },
   ];
 
   const handleAddToCart = () => {
@@ -58,7 +65,7 @@ const ProductDetail = () => {
       {/* Editorial Header */}
       <section className="relative h-[10vh] md:h-[15vh] bg-stone-950 flex items-end pb-8">
         <div className="container-custom">
-          <button 
+          <button
             onClick={() => navigate('/products')}
             className="flex items-center gap-2 text-stone-400 hover:text-secondary transition-colors text-xs font-bold uppercase tracking-[0.3em]"
           >
@@ -88,7 +95,7 @@ const ProductDetail = () => {
                 />
                 <div className="absolute inset-0 bg-stone-900/10 transition-opacity group-hover:opacity-0" />
               </div>
-              
+
               {/* Floating Accents */}
               <div className="absolute -top-10 -left-10 w-40 h-40 bg-secondary/10 rounded-full blur-[80px]" />
               <div className="absolute -bottom-10 -right-10 w-60 h-60 bg-primary/5 rounded-full blur-[100px]" />
@@ -133,12 +140,13 @@ const ProductDetail = () => {
                     <highlight.icon className="w-4 h-4 text-primary" />
                     <span className="text-sm font-medium">{highlight.text}</span>
                   </div>
-                </div>
-
-                <p className="text-stone-500 text-lg font-light leading-relaxed mb-10">
-                  {product.description}
-                </p>
+                ))}
               </div>
+
+              <p className="text-stone-500 text-lg font-light leading-relaxed mb-10">
+                {product.description}
+              </p>
+
 
               {/* Interaction Bar */}
               <div className="flex flex-col sm:flex-row items-center gap-6 mb-16 p-6 rounded-[2rem] bg-stone-50 border border-stone-100">
@@ -157,7 +165,7 @@ const ProductDetail = () => {
                     <Plus className="w-4 h-4 text-stone-500" />
                   </button>
                 </div>
-                
+
                 <button
                   onClick={handleAddToCart}
                   className="btn-premium flex-1 w-full justify-center !py-6"
@@ -217,51 +225,32 @@ const ProductDetail = () => {
               </div>
             </motion.div>
           </div>
-        </div>
-      </section>
-
-              {/* Quality Promise */}
-              <div className="bg-card rounded-xl p-6 mt-6">
-                <div className="flex items-start gap-3">
-                  <Check className="w-6 h-6 text-primary flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="font-heading font-semibold mb-1">BVR Quality Promise</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Every product from BVR Spices undergoes rigorous quality checks to ensure
-                      purity, freshness, and authentic taste. We guarantee 100% natural ingredients
-                      with no preservatives or artificial additives.
-                    </p>
-                  </div>
-                </div>
-                <h3 className="font-heading text-xl font-bold mb-3 group-hover:text-secondary transition-colors">{promise.title}</h3>
-                <p className="text-stone-400 text-sm font-light leading-relaxed">{promise.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+        </div >
+      </section >
 
       {/* Related Experiences */}
-      {relatedProducts.length > 0 && (
-        <section className="section-padding bg-stone-50">
-          <div className="container-custom">
-            <div className="flex items-center justify-between mb-12">
-              <h2 className="font-heading text-3xl md:text-4xl font-bold text-stone-900">
-                Related <span className="text-stone-400 italic">Treasures</span>
-              </h2>
-              <Link to="/products" className="text-primary font-bold text-xs uppercase tracking-[0.3em] hover:underline underline-offset-8 transition-all">
-                View Boutique
-              </Link>
+      {
+        relatedProducts.length > 0 && (
+          <section className="section-padding bg-stone-50">
+            <div className="container-custom">
+              <div className="flex items-center justify-between mb-12">
+                <h2 className="font-heading text-3xl md:text-4xl font-bold text-stone-900">
+                  Related <span className="text-stone-400 italic">Treasures</span>
+                </h2>
+                <Link to="/products" className="text-primary font-bold text-xs uppercase tracking-[0.3em] hover:underline underline-offset-8 transition-all">
+                  View Boutique
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                {relatedProducts.map((p, index) => (
+                  <ProductCard key={p.id} product={p} index={index} />
+                ))}
+              </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {relatedProducts.map((p, index) => (
-                <ProductCard key={p.id} product={p} index={index} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-    </div>
+          </section>
+        )
+      }
+    </div >
   );
 };
 

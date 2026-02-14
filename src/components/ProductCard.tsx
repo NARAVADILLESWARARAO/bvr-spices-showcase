@@ -61,7 +61,7 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
             >
               <ShoppingCart className="w-5 h-5" />
             </button>
-          </div>
+          </motion.div>
 
           {/* Gold Foil Badge */}
           {product.badge && (
@@ -74,6 +74,7 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
             </div>
           )}
         </div>
+      </div>
 
       {/* Content */}
       <div className="p-4 md:p-5">
@@ -98,7 +99,7 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
           </div>
         </div>
       </div>
-    </motion.div>
+    </motion.div >
   );
 };
 
