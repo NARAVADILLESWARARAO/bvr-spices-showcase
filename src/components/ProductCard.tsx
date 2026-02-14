@@ -21,19 +21,30 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
       transition={{ duration: 0.8, delay: index * 0.1, ease: [0.21, 0.45, 0.32, 0.9] }}
       className="group relative"
     >
-      {/* Card Body */}
-      <div className="bg-white rounded-[2rem] overflow-hidden border border-stone-100 hover:border-secondary/30 transition-all duration-700 hover:shadow-premium group">
-        {/* Image Container */}
-        <div className="relative overflow-hidden aspect-[4/5] bg-stone-50">
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-          />
-          
-          {/* Glass Overlay (Boutique Style) */}
-          <div className="absolute inset-0 bg-stone-900/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col items-center justify-center gap-4">
-            <Link to={`/products/${product.id}`} className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+      {/* Image Container */}
+      <div className="relative overflow-hidden aspect-square">
+        <img
+          src={product.image}
+          alt={product.name}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        />
+
+        {/* Badge */}
+        {product.badge && (
+          <Badge className="absolute top-3 left-3 bg-secondary text-secondary-foreground font-medium">
+            {product.badge}
+          </Badge>
+        )}
+
+        {/* Quick Actions Overlay */}
+        <div className="absolute inset-0 bg-foreground/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            whileHover={{ scale: 1 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.2 }}
+          >
+            <Link to={`/products/${product.id}`}>
               <Button
                 variant="secondary"
                 className="rounded-full px-8 bg-white text-stone-900 hover:bg-secondary hover:text-stone-950 font-bold tracking-widest text-xs uppercase"
@@ -64,27 +75,24 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
           )}
         </div>
 
-        {/* Content Section */}
-        <div className="p-8 text-center">
-          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-stone-400 mb-3 block">
-            {product.category}
-          </span>
-          <Link to={`/products/${product.id}`}>
-            <h3 className="font-heading text-xl font-bold text-stone-900 mb-2 group-hover:text-primary transition-colors duration-300">
-              {product.name}
-            </h3>
-          </Link>
-          <div className="flex items-center justify-center gap-2 mb-6 text-stone-500 text-sm font-light">
-            <span>{product.weight}</span>
-            <div className="w-1 h-1 rounded-full bg-stone-300" />
-            <span>Single Origin</span>
-          </div>
-          
-          <div className="flex items-center justify-center gap-3">
-            <span className="text-2xl font-bold text-primary">₹{product.price}</span>
+      {/* Content */}
+      <div className="p-4 md:p-5">
+        <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+          {product.category}
+        </p>
+        <Link to={`/products/${product.id}`}>
+          <h3 className="font-heading text-lg font-semibold text-foreground hover:text-primary transition-colors line-clamp-1">
+            {product.name}
+          </h3>
+        </Link>
+        <p className="text-sm text-muted-foreground mt-1">{product.weight}</p>
+
+        <div className="flex items-center justify-between mt-4">
+          <div className="flex items-baseline gap-2">
+            <span className="text-xl font-bold text-primary">₹{typeof product.price === 'number' ? product.price.toFixed(2) : product.price}</span>
             {product.originalPrice && (
-              <span className="text-sm text-stone-300 line-through font-light">
-                ₹{product.originalPrice}
+              <span className="text-sm text-muted-foreground line-through">
+                ₹{typeof product.originalPrice === 'number' ? product.originalPrice.toFixed(2) : product.originalPrice}
               </span>
             )}
           </div>

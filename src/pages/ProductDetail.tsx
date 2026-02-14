@@ -1,10 +1,10 @@
 import { useState, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, Minus, Plus, ArrowLeft, Check, Leaf, Shield, Package, Utensils, Info, FlaskConical } from 'lucide-react';
+import { ShoppingCart, Minus, Plus, ArrowLeft, Check, Leaf, Shield, Package, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/context/CartContext';
-import { getProductById, products } from '@/data/products';
+import { useProduct, useProducts } from '@/hooks/useProducts'; // Assuming useProducts is needed for related items
 import ProductCard from '@/components/ProductCard';
 
 const ProductDetail = () => {
@@ -14,9 +14,18 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
 
-  const product = id ? getProductById(id) : undefined;
+  const { data: product, isLoading, error } = useProduct(id || '');
+  const { data: allProducts } = useProducts();
 
-  if (!product) {
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error || !product) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-stone-950">
         <div className="text-center">
@@ -29,9 +38,9 @@ const ProductDetail = () => {
     );
   }
 
-  const relatedProducts = products
-    .filter(p => p.category === product.category && p.id !== product.id)
-    .slice(0, 4);
+  const relatedProducts = allProducts
+    ? allProducts.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4)
+    : [];
 
   const tabs = [
     { id: 'description', label: 'The Essence', icon: Info },
@@ -91,30 +100,38 @@ const ProductDetail = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1, delay: 0.2 }}
             >
-              <div className="mb-10">
-                <motion.span 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5 }}
-                  className="text-secondary font-bold text-xs uppercase tracking-[0.4em] mb-4 block"
-                >
-                  {product.category} Boutique
-                </motion.span>
-                <h1 className="font-heading text-4xl md:text-6xl font-bold text-stone-900 mb-6 leading-tight">
-                  {product.name}
-                </h1>
-                
-                <div className="flex items-center gap-6 mb-8">
-                  <div className="flex flex-col">
-                    <span className="text-3xl font-bold text-primary">₹{product.price}</span>
-                    {product.originalPrice && (
-                      <span className="text-sm text-stone-400 line-through">₹{product.originalPrice}</span>
-                    )}
-                  </div>
-                  <div className="h-10 w-[1px] bg-stone-200" />
-                  <div className="flex flex-col">
-                    <span className="text-stone-900 font-bold">{product.weight}</span>
-                    <span className="text-[10px] uppercase tracking-widest text-stone-400">Net Weight</span>
+              <span className="text-secondary font-medium text-sm uppercase tracking-wider">
+                {product.category}
+              </span>
+              <h1 className="font-heading text-3xl md:text-4xl font-bold text-foreground mt-2 mb-4">
+                {product.name}
+              </h1>
+
+              <div className="flex items-baseline gap-3 mb-6">
+                <span className="text-3xl font-bold text-primary">₹{typeof product.price === 'number' ? product.price.toFixed(2) : product.price}</span>
+                {product.originalPrice && (
+                  <>
+                    <span className="text-xl text-muted-foreground line-through">
+                      ₹{typeof product.originalPrice === 'number' ? product.originalPrice.toFixed(2) : product.originalPrice}
+                    </span>
+                    <span className="text-sm bg-secondary/20 text-secondary-foreground px-2 py-1 rounded">
+                      {Math.round((1 - product.price / product.originalPrice) * 100)}% OFF
+                    </span>
+                  </>
+                )}
+              </div>
+
+              <p className="text-muted-foreground mb-4">{product.weight}</p>
+
+              {/* Highlights */}
+              <div className="flex flex-wrap gap-3 mb-8">
+                {highlights.map((highlight) => (
+                  <div
+                    key={highlight.text}
+                    className="flex items-center gap-2 bg-card px-4 py-2 rounded-full"
+                  >
+                    <highlight.icon className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-medium">{highlight.text}</span>
                   </div>
                 </div>
 
@@ -150,17 +167,27 @@ const ProductDetail = () => {
                 </button>
               </div>
 
-              {/* Glassmorphic Tabs */}
-              <div className="space-y-8">
-                <div className="flex gap-2 overflow-x-auto pb-4 hide-scrollbar">
+              {/* Add to Cart Button */}
+              <Button
+                size="xl"
+                className="w-full md:w-auto btn-primary"
+                onClick={handleAddToCart}
+              >
+                <ShoppingCart className="w-5 h-5 mr-2" />
+                Add to Cart - ₹{(product.price * quantity).toFixed(2)}
+              </Button>
+
+              {/* Tabs */}
+              <div className="mt-12">
+                <div className="flex border-b border-border overflow-x-auto">
                   {tabs.map((tab) => (
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest transition-all
-                        ${activeTab === tab.id 
-                          ? 'bg-stone-900 text-white shadow-xl translate-y-[-2px]' 
-                          : 'bg-stone-50 text-stone-400 hover:text-stone-600'}`}
+                      className={`px-4 py-3 font-medium text-sm whitespace-nowrap transition-colors relative ${activeTab === tab.id
+                        ? 'text-primary'
+                        : 'text-muted-foreground hover:text-foreground'
+                        }`}
                     >
                       <div className="flex items-center gap-2">
                         <tab.icon className="w-3 h-3" />
@@ -193,25 +220,18 @@ const ProductDetail = () => {
         </div>
       </section>
 
-      {/* The BVR Promise Section */}
-      <section className="section-padding bg-stone-950 text-white">
-        <div className="container-custom">
-          <div className="grid md:grid-cols-3 gap-12">
-            {[
-              { icon: Leaf, title: 'Single Origin', desc: 'Sourced from specific regional farms to ensure distinct botanical character.' },
-              { icon: Shield, title: 'Bespoke Quality', desc: 'Every batch undergoes clinical evaluation for purity and high curcumin/oil concentration.' },
-              { icon: Package, title: 'Boutique Packing', desc: 'Secured in premium airtight environments to lock in the sensory essence.' }
-            ].map((promise, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.2 }}
-                className="text-center group"
-              >
-                <div className="w-16 h-16 rounded-2xl bg-white/5 mx-auto mb-6 flex items-center justify-center border border-white/10 group-hover:bg-secondary group-hover:scale-110 transition-all duration-500">
-                  <promise.icon className="w-8 h-8 text-secondary group-hover:text-stone-950 transition-colors" />
+              {/* Quality Promise */}
+              <div className="bg-card rounded-xl p-6 mt-6">
+                <div className="flex items-start gap-3">
+                  <Check className="w-6 h-6 text-primary flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="font-heading font-semibold mb-1">BVR Quality Promise</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Every product from BVR Spices undergoes rigorous quality checks to ensure
+                      purity, freshness, and authentic taste. We guarantee 100% natural ingredients
+                      with no preservatives or artificial additives.
+                    </p>
+                  </div>
                 </div>
                 <h3 className="font-heading text-xl font-bold mb-3 group-hover:text-secondary transition-colors">{promise.title}</h3>
                 <p className="text-stone-400 text-sm font-light leading-relaxed">{promise.desc}</p>

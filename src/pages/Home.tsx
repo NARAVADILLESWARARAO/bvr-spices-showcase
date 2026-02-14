@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, Shield, Leaf, Package, Star, CheckCircle } from 'lucide-react';
+import { ArrowRight, Shield, Leaf, Package, Star, CheckCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProductCard from '@/components/ProductCard';
-import { products } from '@/data/products';
+import { useProducts } from '@/hooks/useProducts';
 
 const Home = () => {
-  const bestsellers = products.slice(0, 4);
+  const { data: products, isLoading } = useProducts();
+  const bestsellers = products?.filter(p => p.badge === 'Bestseller').slice(0, 4) || [];
 
   const trustIndicators = [
     { icon: Leaf, title: '100% Natural', description: 'No artificial additives or preservatives' },
@@ -77,8 +78,8 @@ const Home = () => {
                 transition={{ delay: 1, duration: 0.8 }}
                 className="text-xl text-stone-300 mb-12 max-w-xl leading-relaxed font-light"
               >
-                Authentic, single-origin spices handpicked from the most fertile fields of India. 
-                Experience purity that honors tradition.
+                Pure • Authentic • Trusted Spices from BVR Spices. Bringing the
+                essence of traditional Indian cooking to your kitchen.
               </motion.p>
 
               <motion.div
@@ -255,15 +256,21 @@ const Home = () => {
               Bestselling Spices
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Discover our most loved spices, carefully selected and packed to bring 
+              Discover our most loved spices, carefully selected and packed to bring
               authentic flavors to your kitchen.
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {bestsellers.map((product, index) => (
-              <ProductCard key={product.id} product={product} index={index} />
-            ))}
+            {isLoading ? (
+              <div className="col-span-full flex justify-center py-10">
+                <Loader2 className="h-10 w-10 animate-spin text-primary" />
+              </div>
+            ) : (
+              bestsellers.map((product, index) => (
+                <ProductCard key={product.id} product={product} index={index} />
+              ))
+            )}
           </div>
 
           <motion.div
@@ -301,29 +308,43 @@ const Home = () => {
                 Crafting Purity for <br />
                 <span className="text-secondary">Discerning</span> Palates.
               </h2>
-              <div className="space-y-12">
-                {[
-                  { icon: Leaf, title: "Heritage Sourcing", desc: "We partner exclusively with multi-generational farms that prioritize soul over scale." },
-                  { icon: Shield, title: "Uncompromising QC", desc: "Every batch is tested against 24 critical safety and flavor parameters in ISO-certified labs." },
-                  { icon: Package, title: "Artisan Packing", desc: "Small-batch packed in light-protected glass and high-grade foil to lock in volatile oils." }
-                ].map((item, idx) => (
-                  <motion.div 
-                    key={item.title}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: idx * 0.2 }}
-                    className="flex gap-6 group"
-                  >
-                    <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0 group-hover:bg-secondary group-hover:border-secondary transition-all duration-500">
-                      <item.icon className="w-8 h-8 text-secondary group-hover:text-stone-900 transition-colors duration-500" />
-                    </div>
-                    <div>
-                      <h3 className="font-heading font-bold text-xl mb-2 text-white group-hover:text-secondary transition-colors">{item.title}</h3>
-                      <p className="text-stone-400 leading-relaxed">{item.desc}</p>
-                    </div>
-                  </motion.div>
-                ))}
+              <div className="space-y-6">
+                <div className="flex gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <Leaf className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-heading font-semibold text-lg mb-1">Traditional Sourcing</h3>
+                    <p className="text-muted-foreground">
+                      We source our spices directly from trusted farmers across India,
+                      ensuring freshness and authenticity in every batch.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <Shield className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-heading font-semibold text-lg mb-1">Quality Testing</h3>
+                    <p className="text-muted-foreground">
+                      Every batch undergoes rigorous quality checks to ensure purity,
+                      flavor, and freedom from contaminants.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <Package className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-heading font-semibold text-lg mb-1">Careful Packaging</h3>
+                    <p className="text-muted-foreground">
+                      Our spices are hygienically packed in airtight containers to
+                      preserve freshness and extend shelf life.
+                    </p>
+                  </div>
+                </div>
               </div>
             </motion.div>
 
@@ -672,9 +693,9 @@ const Home = () => {
               Ready to Transform <br />
               <span className="text-secondary italic">Your Cooking?</span>
             </h2>
-            <p className="text-stone-400 text-xl mb-12 max-w-2xl mx-auto font-light leading-relaxed">
-              Step into a world of pure, authentic flavor. Experience the BVR difference 
-              and bring the soul of India to your kitchen today.
+            <p className="text-primary-foreground/80 text-lg mb-8 max-w-2xl mx-auto">
+              Experience the difference that quality makes. Order now and taste
+              the authentic flavors of India.
             </p>
             <Link to="/products">
               <button className="btn-premium !px-16 !py-6 !text-xl shadow-premium hover:shadow-hover">

@@ -3,12 +3,14 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, Menu, X } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { totalItems } = useCart();
+  const { user } = useAuth();
   const location = useLocation();
 
   useEffect(() => {
@@ -39,17 +41,16 @@ const Header = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          ✨ 100% Natural | No Preservatives | Hygienically Packed ✨
+          ✨ 1000% Natural | No Preservatives | Hygienically Packed ✨
         </motion.p>
       </div>
 
       {/* Main Header */}
       <motion.header
-        className={`sticky top-0 z-50 transition-all duration-300 ${
-          isScrolled
-            ? 'bg-background/95 backdrop-blur-md shadow-soft'
-            : 'bg-background'
-        }`}
+        className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled
+          ? 'bg-background/95 backdrop-blur-md shadow-soft'
+          : 'bg-background'
+          }`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
@@ -85,11 +86,10 @@ const Header = () => {
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`relative font-medium transition-colors duration-200 ${
-                    location.pathname === link.path
-                      ? 'text-primary'
-                      : 'text-foreground hover:text-primary'
-                  }`}
+                  className={`relative font-medium transition-colors duration-200 ${location.pathname === link.path
+                    ? 'text-primary'
+                    : 'text-foreground hover:text-primary'
+                    }`}
                 >
                   {link.name}
                   {location.pathname === link.path && (
@@ -103,46 +103,70 @@ const Header = () => {
               ))}
             </nav>
 
-            {/* Cart & Mobile Menu */}
-            <div className="flex items-center gap-4">
-              <Link to="/cart">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="relative hover:bg-primary/10"
-                >
-                  <ShoppingCart className="w-5 h-5" />
-                  <AnimatePresence>
-                    {totalItems > 0 && (
-                      <motion.span
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        exit={{ scale: 0 }}
-                        className="absolute -top-1 -right-1 w-5 h-5 bg-secondary text-secondary-foreground text-xs font-bold rounded-full flex items-center justify-center"
-                      >
-                        {totalItems}
-                      </motion.span>
-                    )}
-                  </AnimatePresence>
+            {/* Auth */}
+            {user ? (
+              <div className="flex items-center gap-4">
+                <Link to="/profile">
+                  <span className="text-sm font-medium hidden sm:inline-block hover:text-primary transition-colors">
+                    Hi, {user.name.split(' ')[0]}
+                  </span>
+                </Link>
+                <Link to="/profile">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="hover:text-primary"
+                  >
+                    Profile
+                  </Button>
+                </Link>
+              </div>
+            ) : (
+              <Link to="/login">
+                <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
+                  Login
                 </Button>
               </Link>
+            )}
 
-              {/* Mobile Menu Toggle */}
+            <Link to="/cart">
               <Button
                 variant="ghost"
                 size="icon"
-                className="md:hidden"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="relative hover:bg-primary/10"
               >
-                {isMobileMenuOpen ? (
-                  <X className="w-6 h-6" />
-                ) : (
-                  <Menu className="w-6 h-6" />
-                )}
+                <ShoppingCart className="w-5 h-5" />
+                <AnimatePresence>
+                  {totalItems > 0 && (
+                    <motion.span
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      exit={{ scale: 0 }}
+                      className="absolute -top-1 -right-1 w-5 h-5 bg-secondary text-secondary-foreground text-xs font-bold rounded-full flex items-center justify-center"
+                    >
+                      {totalItems}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
               </Button>
-            </div>
+            </Link>
+
+            {/* Mobile Menu Toggle */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
+            </Button>
           </div>
         </div>
+
 
         {/* Mobile Menu */}
         <AnimatePresence>
@@ -164,11 +188,10 @@ const Header = () => {
                   >
                     <Link
                       to={link.path}
-                      className={`block py-3 px-4 rounded-lg font-medium transition-colors ${
-                        location.pathname === link.path
-                          ? 'bg-primary/10 text-primary'
-                          : 'text-foreground hover:bg-muted'
-                      }`}
+                      className={`block py-3 px-4 rounded-lg font-medium transition-colors ${location.pathname === link.path
+                        ? 'bg-primary/10 text-primary'
+                        : 'text-foreground hover:bg-muted'
+                        }`}
                     >
                       {link.name}
                     </Link>
@@ -178,7 +201,7 @@ const Header = () => {
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.header>
+      </motion.header >
     </>
   );
 };

@@ -1,30 +1,26 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Filter } from 'lucide-react';
+import { Search, Filter, Loader2 } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
-import { products, categories } from '@/data/products';
+import { categories } from '@/data/products'; // Keeping categories static for now or fetch from backend if available
 import { Button } from '@/components/ui/button';
+import { useProducts } from '@/hooks/useProducts';
 
 const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('featured'); // featured, price-low, price-high
 
-  const filteredAndSortedProducts = useMemo(() => {
-    let result = products.filter((product) => {
+  const { data: products, isLoading, error } = useProducts();
+
+  const filteredProducts = useMemo(() => {
+    if (!products) return [];
+    return products.filter((product) => {
       const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
       const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
-
-    if (sortBy === 'price-low') {
-      result = [...result].sort((a, b) => a.price - b.price);
-    } else if (sortBy === 'price-high') {
-      result = [...result].sort((a, b) => b.price - a.price);
-    }
-    
-    return result;
-  }, [selectedCategory, searchQuery, sortBy]);
+  }, [products, selectedCategory, searchQuery]);
 
   return (
     <div className="min-h-screen bg-stone-950">
@@ -63,9 +59,9 @@ const Products = () => {
             <h1 className="font-heading text-5xl md:text-7xl font-bold text-white mb-6">
               BVR <span className="text-secondary italic">Spice</span> Boutique
             </h1>
-            <p className="text-stone-400 text-lg max-w-2xl mx-auto font-light leading-relaxed">
-              Explore our curated selection of single-origin Indian spices, 
-              hand-selected for the discerning gourmet.
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              Carefully sourced and packed for purity. Discover the authentic flavors
+              that have been trusted by Indian kitchens for generations.
             </p>
           </motion.div>
         </div>
@@ -87,10 +83,7 @@ const Products = () => {
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 flex-shrink-0
-                    ${selectedCategory === category 
-                      ? 'bg-secondary text-stone-950' 
-                      : 'bg-white/5 text-stone-400 hover:bg-white/10 hover:text-white border border-white/5'
+                  className={`flex-shrink-0 ${selectedCategory === category ? '' : 'text-muted-foreground'
                     }`}
                 >
                   {category}
@@ -141,9 +134,17 @@ const Products = () => {
       {/* Products Grid */}
       <section className="section-padding bg-stone-50 min-h-[60vh]">
         <div className="container-custom">
-          {filteredAndSortedProducts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {filteredAndSortedProducts.map((product, index) => (
+          {isLoading ? (
+            <div className="flex justify-center items-center py-20">
+              <Loader2 className="h-10 w-10 animate-spin text-primary" />
+            </div>
+          ) : error ? (
+            <div className="text-center py-20 text-red-500">
+              Error loading products. Please try again later.
+            </div>
+          ) : filteredProducts.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredProducts.map((product, index) => (
                 <ProductCard key={product.id} product={product} index={index} />
               ))}
             </div>

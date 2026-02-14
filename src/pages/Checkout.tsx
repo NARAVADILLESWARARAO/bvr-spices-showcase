@@ -1,21 +1,61 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Check, Package, Truck, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
 
 const Checkout = () => {
   const navigate = useNavigate();
   const { items, totalPrice, clearCart } = useCart();
+  const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
 
+  useEffect(() => {
+    if (!user) {
+      navigate('/login', { state: { from: { pathname: '/checkout' } } });
+      return;
+    }
+
+    // Fetch latest user profile to pre-fill data
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch('/api/users/profile', {
+          headers: { Authorization: `Bearer ${user.token}` }
+        });
+        const data = await res.json();
+        if (res.ok) {
+          // meaningful defaults from profile
+          const defaultAddress = data.addresses && data.addresses.length > 0
+            ? data.addresses.find((a: any) => a.isDefault) || data.addresses[0]
+            : null;
+
+          setFormData(prev => ({
+            ...prev,
+            firstName: data.name.split(' ')[0] || '',
+            lastName: data.name.split(' ').slice(1).join(' ') || '',
+            email: data.email || '',
+            phone: data.phone || '',
+            address: defaultAddress?.street || '',
+            city: defaultAddress?.city || '',
+            state: defaultAddress?.state || '',
+            pincode: defaultAddress?.postalCode || '',
+          }));
+        }
+      } catch (error) {
+        console.error("Failed to fetch profile", error);
+      }
+    };
+    fetchProfile();
+  }, [user, navigate]);
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
-    email: '',
+    email: user?.email || '',
     phone: '',
     address: '',
     city: '',
@@ -27,18 +67,61 @@ const Checkout = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (step < 3) {
       setStep(step + 1);
     } else {
       setIsSubmitting(true);
-      // Simulate order processing
-      setTimeout(() => {
+
+      try {
+        // Create order
+        const orderData = {
+          orderItems: items.map(item => ({
+            name: item.name,
+            qty: item.quantity,
+            image: item.image,
+            price: item.price,
+            product: item.id,
+          })),
+          shippingAddress: {
+            address: formData.address,
+            city: formData.city,
+            postalCode: formData.pincode,
+            country: 'India', // Default or add to form
+          },
+          paymentMethod: 'Card', // Hardcoded for demo/MVP or selected from UI
+          itemsPrice: totalPrice,
+          taxPrice: 0,
+          shippingPrice: 0,
+          totalPrice: totalPrice,
+        };
+
+        const res = await fetch('/api/orders', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user?.token}`,
+          },
+          body: JSON.stringify(orderData),
+        });
+
+        if (!res.ok) throw new Error('Failed to place order');
+
+        const createdOrder = await res.json();
+
+        // Optionally update profile with new address if needed? 
+        // User logic: "orders will update into the user profile myorders".
+        // This is handled by backend Order creation linking to user.
+
         setIsSubmitting(false);
         setOrderComplete(true);
-        clearCart();
-      }, 2000);
+        clearCart(); // Clear frontend context cart
+      } catch (error) {
+        console.error('Order failed', error);
+        setIsSubmitting(false);
+        // Show error toast?
+      }
     }
   };
 
@@ -75,20 +158,17 @@ const Checkout = () => {
           <p className="text-secondary font-bold text-xs uppercase tracking-[0.4em] mb-12">
             Order Confirmed • Reference #BVR{Math.random().toString(36).substr(2, 9).toUpperCase()}
           </p>
-          
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
-            <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl">
-              <h4 className="text-white font-bold mb-3 uppercase tracking-widest text-xs">Purity Promise</h4>
-              <p className="text-stone-400 text-sm font-light leading-relaxed">
-                Your spices are being freshly extracted and packed within 24 hours of this confirmation.
-              </p>
-            </div>
-            <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl text-center flex flex-col justify-center">
-              <p className="text-secondary font-heading font-bold text-2xl italic mb-2">
-                "Taste You Can Trust"
-              </p>
-              <p className="text-[10px] text-stone-500 uppercase tracking-[0.2em]">BVR Heritage Standard</p>
-            </div>
+          <p className="text-muted-foreground mb-8">
+            Thank you for choosing BVR Spices! We've received your order and will
+            send you a confirmation email shortly.
+          </p>
+          <div className="bg-card rounded-xl p-6 mb-8">
+            <p className="text-secondary font-heading font-semibold text-lg">
+              "Taste You Can Trust"
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              Your spices will be freshly packed and shipped within 24 hours.
+            </p>
           </div>
 
           <Link to="/">
@@ -122,32 +202,31 @@ const Checkout = () => {
               </div>
             </div>
 
-            {/* Progress Steps */}
-            <div className="flex items-center gap-4 bg-white/5 p-2 rounded-full border border-white/10">
-              {steps.map((s, index) => (
-                <div key={s.id} className="flex items-center">
-                  <motion.div
-                    animate={{
-                      scale: step >= s.id ? 1 : 0.9,
-                      opacity: step >= s.id ? 1 : 0.3,
-                    }}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-full transition-all ${
-                      step >= s.id ? 'bg-secondary text-stone-900 shadow-lg' : 'text-white'
+          {/* Progress Steps */}
+          <div className="flex items-center justify-center mt-6 gap-4">
+            {steps.map((s, index) => (
+              <div key={s.id} className="flex items-center">
+                <motion.div
+                  animate={{
+                    scale: step >= s.id ? 1 : 0.9,
+                    opacity: step >= s.id ? 1 : 0.5,
+                  }}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full ${step >= s.id ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
                     }`}
-                  >
-                    {step > s.id ? (
-                      <Check className="w-3 h-3 font-bold" />
-                    ) : (
-                      <s.icon className={`w-3 h-3 ${step === s.id ? 'text-stone-900' : 'text-secondary'}`} />
-                    )}
-                    <span className="text-[10px] font-bold uppercase tracking-widest hidden sm:inline">{s.name}</span>
-                  </motion.div>
-                  {index < steps.length - 1 && (
-                    <div className="w-6 h-[1px] bg-white/10 mx-1" />
+                >
+                  {step > s.id ? (
+                    <Check className="w-4 h-4" />
+                  ) : (
+                    <s.icon className="w-4 h-4" />
                   )}
-                </div>
-              ))}
-            </div>
+                  <span className="text-sm font-medium hidden sm:inline">{s.name}</span>
+                </motion.div>
+                {index < steps.length - 1 && (
+                  <div className={`w-8 sm:w-16 h-0.5 mx-2 ${step > s.id ? 'bg-primary' : 'bg-muted'
+                    }`} />
+                )}
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -352,25 +431,23 @@ const Checkout = () => {
                         <p className="font-bold text-sm truncate text-white uppercase tracking-wider">{item.name}</p>
                         <p className="text-[10px] text-stone-500 uppercase tracking-widest mt-1">Qty: {item.quantity} • {item.weight}</p>
                       </div>
-                      <p className="font-bold text-sm text-secondary">₹{item.price * item.quantity}</p>
+                      <p className="font-medium text-sm">₹{(item.price * item.quantity).toFixed(2)}</p>
                     </div>
                   ))}
                 </div>
 
-                <div className="border-t border-white/10 pt-8 space-y-4">
-                  <div className="flex justify-between items-center text-stone-400">
-                    <span className="text-[10px] font-bold uppercase tracking-widest">Subtotal</span>
-                    <span className="font-bold text-white">₹{totalPrice}</span>
+                <div className="border-t border-border pt-4 space-y-2">
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>Subtotal</span>
+                    <span>₹{totalPrice.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between items-center text-stone-400">
                     <span className="text-[10px] font-bold uppercase tracking-widest">Concierge Logistics</span>
                     <span className="text-secondary text-[10px] font-bold uppercase tracking-widest italic">Complimentary</span>
                   </div>
-                  <div className="flex justify-between items-end pt-4 border-t border-white/5">
-                    <div>
-                      <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-secondary/70 block mb-1">Total Balance</span>
-                      <span className="text-3xl font-bold text-white leading-none">₹{totalPrice}</span>
-                    </div>
+                  <div className="flex justify-between font-bold text-lg pt-2 border-t border-border">
+                    <span>Total</span>
+                    <span className="text-primary">₹{totalPrice.toFixed(2)}</span>
                   </div>
                 </div>
               </div>

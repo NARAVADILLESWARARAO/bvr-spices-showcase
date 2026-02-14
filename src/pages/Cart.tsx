@@ -125,12 +125,12 @@ const Cart = () => {
 
                         {/* Price */}
                         <div className="text-right">
-                          <p className="font-bold text-xl text-primary">
-                            ₹{item.price * item.quantity}
+                          <p className="font-bold text-lg text-primary">
+                            ₹{(item.price * item.quantity).toFixed(2)}
                           </p>
                           {item.quantity > 1 && (
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-stone-300">
-                              ₹{item.price} per unit
+                            <p className="text-xs text-muted-foreground">
+                              ₹{item.price.toFixed(2)} each
                             </p>
                           )}
                         </div>
@@ -169,21 +169,19 @@ const Cart = () => {
                   <div className="h-[1px] flex-1 bg-white/10" />
                 </h2>
 
-                <div className="space-y-6 mb-10">
-                  <div className="flex justify-between items-center text-stone-400">
-                    <span className="text-sm uppercase tracking-widest font-bold">Subtotal</span>
-                    <span className="text-lg font-bold text-white">₹{totalPrice}</span>
+                <div className="space-y-4 mb-6">
+                  <div className="flex justify-between text-muted-foreground">
+                    <span>Subtotal</span>
+                    <span>₹{totalPrice.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between items-center text-stone-400">
                     <span className="text-sm uppercase tracking-widest font-bold">Concierge Fee</span>
                     <span className="text-secondary font-bold text-sm uppercase tracking-widest">Complimentary</span>
                   </div>
-                  <div className="pt-6 border-t border-white/10">
-                    <div className="flex justify-between items-end">
-                      <div>
-                        <span className="text-xs uppercase tracking-[0.3em] text-secondary font-bold block mb-1">Total Balance</span>
-                        <span className="text-3xl font-bold text-white leading-none">₹{totalPrice}</span>
-                      </div>
+                  <div className="border-t border-border pt-4">
+                    <div className="flex justify-between font-bold text-lg text-foreground">
+                      <span>Total</span>
+                      <span className="text-primary">₹{totalPrice.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
