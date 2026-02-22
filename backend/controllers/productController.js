@@ -56,11 +56,15 @@ const createProduct = asyncHandler(async (req, res) => {
         price: 0,
         user: req.user._id,
         image: '/images/sample.jpg',
-        brand: 'Sample brand',
-        category: 'Sample category',
+        brand: 'BVR Spices',
+        category: 'Powders',
         countInStock: 0,
         numReviews: 0,
         description: 'Sample description',
+        weight: '100g',
+        ingredients: 'Sample ingredients',
+        usageTips: 'Sample usage tips',
+        isBestSeller: false
     });
 
     const createdProduct = await product.save();
@@ -79,18 +83,26 @@ const updateProduct = asyncHandler(async (req, res) => {
         brand,
         category,
         countInStock,
+        weight,
+        ingredients,
+        usageTips,
+        isBestSeller
     } = req.body;
 
     const product = await Product.findById(req.params.id);
 
     if (product) {
-        product.name = name;
-        product.price = price;
-        product.description = description;
-        product.image = image;
-        product.brand = brand;
-        product.category = category;
-        product.countInStock = countInStock;
+        product.name = name || product.name;
+        product.price = price !== undefined ? price : product.price;
+        product.description = description || product.description;
+        product.image = image || product.image;
+        product.brand = brand || product.brand;
+        product.category = category || product.category;
+        product.countInStock = countInStock !== undefined ? countInStock : product.countInStock;
+        product.weight = weight || product.weight;
+        product.ingredients = ingredients || product.ingredients;
+        product.usageTips = usageTips || product.usageTips;
+        product.isBestSeller = isBestSeller !== undefined ? isBestSeller : product.isBestSeller;
 
         const updatedProduct = await product.save();
         res.json(updatedProduct);

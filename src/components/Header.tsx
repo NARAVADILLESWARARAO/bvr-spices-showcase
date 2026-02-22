@@ -111,6 +111,17 @@ const Header = () => {
                     Hi, {user.name.split(' ')[0]}
                   </span>
                 </Link>
+                {user.isAdmin && (
+                  <Link to="/admin/dashboard">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-primary text-primary hover:bg-primary hover:text-white transition-all font-bold"
+                    >
+                      Admin Panel
+                    </Button>
+                  </Link>
+                )}
                 <Link to="/profile">
                   <Button
                     variant="ghost"
@@ -197,6 +208,20 @@ const Header = () => {
                     </Link>
                   </motion.div>
                 ))}
+                {user?.isAdmin && (
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: navLinks.length * 0.1 }}
+                  >
+                    <Link
+                      to="/admin/dashboard"
+                      className="block py-3 px-4 rounded-lg font-bold bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors"
+                    >
+                      Admin Panel
+                    </Link>
+                  </motion.div>
+                )}
               </nav>
             </motion.div>
           )}

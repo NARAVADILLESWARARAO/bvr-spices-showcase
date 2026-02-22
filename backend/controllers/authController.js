@@ -11,6 +11,10 @@ const authUser = asyncHandler(async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
+        if (user.isBlocked) {
+            res.status(401);
+            throw new Error('Your account is blocked. Please contact support.');
+        }
         res.json({
             _id: user._id,
             name: user.name,
@@ -182,6 +186,83 @@ const deleteAddress = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Get all users
+// @route   GET /api/users
+// @access  Private/Admin
+const getUsers = asyncHandler(async (req, res) => {
+    const users = await User.find({});
+    // For each user, we might want to count orders
+    const Order = require('../models/Order');
+    const usersWithOrderCount = await Promise.all(users.map(async (user) => {
+        const orderCount = await Order.countDocuments({ user: user._id });
+        return {
+            ...user.toObject(),
+            totalOrders: orderCount
+        };
+    }));
+    res.json(usersWithOrderCount);
+});
+
+// @desc    Delete user
+// @route   DELETE /api/users/:id
+// @access  Private/Admin
+const deleteUser = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id);
+
+    if (user) {
+        if (user.isAdmin) {
+            res.status(400);
+            throw new Error('Cannot delete admin user');
+        }
+        await user.deleteOne();
+        res.json({ message: 'User removed' });
+    } else {
+        res.status(404);
+        throw new Error('User not found');
+    }
+});
+
+// @desc    Get user by ID
+// @route   GET /api/users/:id
+// @access  Private/Admin
+const getUserById = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id).select('-password');
+
+    if (user) {
+        res.json(user);
+    } else {
+        res.status(404);
+        throw new Error('User not found');
+    }
+});
+
+// @desc    Update user
+// @route   PUT /api/users/:id
+// @access  Private/Admin
+const updateUser = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id);
+
+    if (user) {
+        user.name = req.body.name || user.name;
+        user.email = req.body.email || user.email;
+        user.isAdmin = req.body.isAdmin !== undefined ? req.body.isAdmin : user.isAdmin;
+        user.isBlocked = req.body.isBlocked !== undefined ? req.body.isBlocked : user.isBlocked;
+
+        const updatedUser = await user.save();
+
+        res.json({
+            _id: updatedUser._id,
+            name: updatedUser.name,
+            email: updatedUser.email,
+            isAdmin: updatedUser.isAdmin,
+            isBlocked: updatedUser.isBlocked,
+        });
+    } else {
+        res.status(404);
+        throw new Error('User not found');
+    }
+});
+
 module.exports = {
     authUser,
     registerUser,
@@ -190,4 +271,8 @@ module.exports = {
     addAddress,
     updateAddress,
     deleteAddress,
+    getUsers,
+    deleteUser,
+    getUserById,
+    updateUser,
 };

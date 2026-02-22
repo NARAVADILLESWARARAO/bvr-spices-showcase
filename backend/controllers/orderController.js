@@ -103,10 +103,47 @@ const getOrders = asyncHandler(async (req, res) => {
     res.json(orders);
 });
 
+// @desc    Update order status
+// @route   PUT /api/orders/:id/status
+// @access  Private/Admin
+const updateOrderStatus = asyncHandler(async (req, res) => {
+    const order = await Order.findById(req.params.id);
+
+    if (order) {
+        const { status } = req.body;
+
+        if (status === 'Delivered') {
+            order.isDelivered = true;
+            order.deliveredAt = Date.now();
+        } else if (status === 'Pending') {
+            order.isDelivered = false;
+        }
+
+        // We can add more statuses if needed, but for now we follow requirement: Pending, Confirmed, Shipped, Delivered
+        // Let's stick to the delivered boolean for simplicity in DB, but we could add a status field too.
+        // Actually the model doesn't have a status field. Let's add it or use isDelivered.
+        // The requirement says: Update order status: Pending, Confirmed, Shipped, Delivered.
+        // I'll add a 'status' field to the Order model if it doesn't exist.
+
+        order.status = status;
+        if (status === 'Delivered') {
+            order.isDelivered = true;
+            order.deliveredAt = Date.now();
+        }
+
+        const updatedOrder = await order.save();
+        res.json(updatedOrder);
+    } else {
+        res.status(404);
+        throw new Error('Order not found');
+    }
+});
+
 module.exports = {
     addOrderItems,
     getOrderById,
     updateOrderToPaid,
     getMyOrders,
     getOrders,
+    updateOrderStatus,
 };

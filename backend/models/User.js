@@ -29,6 +29,10 @@ const userSchema = mongoose.Schema(
             required: true,
             default: false,
         },
+        isBlocked: {
+            type: Boolean,
+            default: false,
+        },
         // Match user-entered password to hashed password in database
     },
     {
